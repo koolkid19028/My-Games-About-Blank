@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loading...</title>
+    <script>
+        window.onload = function () {
+            // Open a blank page
+            const win = window.open("about:blank", "_blank");
+            if (win) {
+                // Load index.html into the blank page
+                win.location.href = main.html";
+                // Close the launcher page
+                window.close();
+            } else {
+                // Popup blocked — load normally instead
+                window.location.href = "index.html";
+            }
+        };
+    </script>
+</head>
+<body>
+    Loading...
+</body>
+</html>
