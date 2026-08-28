@@ -5,12 +5,14 @@
     <meta charset="UTF-8">
     <title>Loading...</title>
 </head>
-
 <body>
+
 <script>
 (async function () {
+    const targetURL =
+        "https://google-classroom-liard.vercel.app/Duckmath/index.html";
 
-    // Open a real about:blank tab
+    // Open a genuine about:blank tab
     const blank = window.open("about:blank", "_blank");
 
     if (!blank) {
@@ -20,25 +22,27 @@
     }
 
     try {
-        // Get main.html from the SAME directory as this index.html
-        const mainURL = new URL("main.html", window.location.href);
-
-        const response = await fetch(mainURL);
+        // Request the Duckmath page
+        const response = await fetch(targetURL);
 
         if (!response.ok) {
-            throw new Error("Could not load main.html (" + response.status + ")");
+            throw new Error("HTTP " + response.status);
         }
 
         let html = await response.text();
 
         /*
-         * IMPORTANT:
-         * Make relative links resolve from the actual directory
-         * containing main.html.
+         * Make relative files such as:
+         *
+         *   style.css
+         *   script.js
+         *   games/foo.html
+         *   images/logo.png
+         *
+         * resolve relative to /Duckmath/
          */
-        const baseURL = new URL("./", mainURL).href;
-
-        const baseTag = `<base href="${baseURL}">`;
+        const baseTag =
+            '<base href="https://google-classroom-liard.vercel.app/Duckmath/">';
 
         if (/<head[\s>]/i.test(html)) {
             html = html.replace(
@@ -49,29 +53,28 @@
             html = baseTag + html;
         }
 
-        // Put main.html directly into about:blank.
+        // Write the page directly into about:blank.
         // No iframe is used.
         blank.document.open();
         blank.document.write(html);
         blank.document.close();
 
     } catch (error) {
-
         blank.document.open();
         blank.document.write(`
             <!DOCTYPE html>
             <html>
-            <body style="font-family:Arial;text-align:center;padding:50px">
-                <h2>Failed to load main.html</h2>
+            <body style="font-family:Arial;text-align:center;padding:40px">
+                <h2>Could not load Duckmath</h2>
                 <p>${error.message}</p>
             </body>
             </html>
         `);
         blank.document.close();
     }
-
 })();
 </script>
+
 </body>
 </html>
 ```
