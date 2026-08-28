@@ -2,29 +2,20 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Filter Test</title>
+    <title>Test Launcher</title>
 </head>
 <body>
 <script>
-const test = window.open("about:blank", "_blank");
-
-if (!test) {
-    document.body.textContent = "Popup blocked.";
-} else {
-    test.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <body>
-            <h1>About:blank test</h1>
-            <iframe
-                src="${location.origin}/main.html"
-                style="width:100%;height:90vh;border:0">
-            </iframe>
-        </body>
-        </html>
-    `);
-    test.document.close();
-}
+    const target = new URL("main.html", window.location.href).href;
+    const tab = window.open("about:blank", "_blank");
+    if (tab) {
+        tab.location.href = target;
+    } else {
+        document.body.innerHTML = `
+            <h2>Popup blocked</h2>
+            <p>Allow popups for this test site and try again.</p>
+        `;
+    }
 </script>
 </body>
 </html>
