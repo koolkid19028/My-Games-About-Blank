@@ -5,16 +5,15 @@
     <title>Loading...</title>
     <script>
         window.onload = function () {
-            // Open a blank page
-            const win = window.open("about:blank", "_blank");
-            if (win) {
-                // Load index.html into the blank page
-                win.location.href = main.html";
-                // Close the launcher page
-                window.close();
+            const newTab = window.open("about:blank", "_blank");
+            if (newTab) {
+                setTimeout(() => {
+                    newTab.location.href = "main.html";
+                    window.close();
+                }, 100);
             } else {
-                // Popup blocked — load normally instead
-                window.location.href = "index.html";
+                // If popups are blocked
+                window.location.href = "main.html";
             }
         };
     </script>
