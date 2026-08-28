@@ -6,45 +6,41 @@
 </head>
 <body>
 <script>
-(async () => {
+(async function () {
     const blank = window.open("about:blank", "_blank");
     if (!blank) {
-        document.body.innerHTML =
-            "<h2>Popup blocked</h2><p>Please allow popups and try again.</p>";
+        document.body.textContent = "Popup blocked.";
         return;
     }
     try {
-        const response = await fetch("main.html");
+        const response = await fetch("./main.html");
         if (!response.ok) {
-            throw new Error("Could not load main.html");
+            throw new Error("main.html could not be loaded");
         }
         let html = await response.text();
-        /*
-         * Keep relative CSS, JS, images, etc. pointing to
-         * the same folder as main.html.
-         */
-        const base = new URL("main.html", location.href).href;
+        // Make relative CSS/JS/image paths work like they do in main.html.
+        const baseURL = new URL("./", window.location.href).href;
         if (/<head[\s>]/i.test(html)) {
             html = html.replace(
                 /<head([^>]*)>/i,
-                `<head$1><base href="${base}">`
+                `<head$1><base href="${baseURL}">`
             );
         } else {
-            html = `<base href="${base}">` + html;
+            html = `<base href="${baseURL}">` + html;
         }
+        // main.html becomes the actual document.
+        // No iframe is used.
         blank.document.open();
         blank.document.write(html);
         blank.document.close();
-        // Keep the original page out of the way.
-        window.location.replace("about:blank");
-    } catch (error) {
+    } catch (err) {
         blank.document.open();
         blank.document.write(`
             <!DOCTYPE html>
             <html>
             <body>
-                <h2>Failed to load main.html</h2>
-                <p>${error.message}</p>
+                <h2>Could not load the site</h2>
+                <p>${err.message}</p>
             </body>
             </html>
         `);
