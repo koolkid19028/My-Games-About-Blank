@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,41 +7,56 @@
 </head>
 <body>
 <script>
-(async function () {
+(async () => {
+    // Find the directory containing this index.html
+    const folder = new URL("./", window.location.href);
+
+    // main.html in the same directory
+    const mainURL = new URL("main.html", folder);
+
+    // Open an actual about:blank document
     const blank = window.open("about:blank", "_blank");
+
     if (!blank) {
         document.body.textContent = "Popup blocked.";
         return;
     }
+
     try {
-        const response = await fetch("./main.html");
+        const response = await fetch(mainURL.href);
+
         if (!response.ok) {
-            throw new Error("main.html could not be loaded");
+            throw new Error(`HTTP ${response.status}`);
         }
+
         let html = await response.text();
-        // Make relative CSS/JS/image paths work like they do in main.html.
-        const baseURL = new URL("./", window.location.href).href;
+
+        // Keep relative resources working from the subsite's directory.
+        const base = folder.href;
+
         if (/<head[\s>]/i.test(html)) {
             html = html.replace(
                 /<head([^>]*)>/i,
-                `<head$1><base href="${baseURL}">`
+                `<head$1><base href="${base}">`
             );
         } else {
-            html = `<base href="${baseURL}">` + html;
+            html = `<base href="${base}">` + html;
         }
-        // main.html becomes the actual document.
-        // No iframe is used.
+
+        // Write main.html directly into the about:blank document.
+        // No iframe and no navigation to main.html.
         blank.document.open();
         blank.document.write(html);
         blank.document.close();
-    } catch (err) {
+
+    } catch (error) {
         blank.document.open();
         blank.document.write(`
             <!DOCTYPE html>
             <html>
             <body>
-                <h2>Could not load the site</h2>
-                <p>${err.message}</p>
+                <h2>Unable to load main.html</h2>
+                <p>${error.message}</p>
             </body>
             </html>
         `);
@@ -50,3 +66,4 @@
 </script>
 </body>
 </html>
+```
