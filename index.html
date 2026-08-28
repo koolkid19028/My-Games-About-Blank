@@ -8,11 +8,12 @@
 <script>
 const blank = window.open("about:blank", "_blank");
 if (blank) {
+    blank.document.open();
     blank.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Loading</title>
+            <title>My Website</title>
             <style>
                 html, body {
                     margin: 0;
@@ -24,19 +25,18 @@ if (blank) {
                 iframe {
                     width: 100%;
                     height: 100%;
-                    border: 0;
+                    border: none;
                 }
             </style>
         </head>
         <body>
-            <iframe src="${location.origin}/main.html"></iframe>
+            <iframe src="${location.href.replace(/index\\.html.*$/, '')}main.html"></iframe>
         </body>
         </html>
     `);
     blank.document.close();
-} else {
-    document.body.innerHTML =
-        "<h2>Please allow popups to use this site.</h2>";
+    // Close the original index.html tab
+    window.close();
 }
 </script>
 </body>
